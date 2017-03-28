@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    tools:context="com.example.lukas.zagrajmy.AccountActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/account_user_photo_view"
+        android:layout_width="@dimen/photo_horizontal_size"
+        android:layout_height="@dimen/photo_vertical_size" />
+
+    <Button
+        android:id="@+id/account_set_photo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/account_set_photo_button_text" />
+
+    <EditText
+        android:id="@+id/account_user_name_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/account_user_name_placeholder" />
+
+    <!--<EditText-->
+        <!--android:id="@+id/account_user_year_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="number"-->
+        <!--android:hint="@string/account_user_year_placeholder"/>-->
+
+</LinearLayout>

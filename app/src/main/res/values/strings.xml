@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Zagrajmy</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <string name="account_user_name_placeholder">Name</string>
+    <string name="account_user_year_placeholder">Year of Birth</string>
+    <string name="account_set_photo_button_text">Set photo</string>
+</resources>
