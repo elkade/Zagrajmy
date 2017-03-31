@@ -6,4 +6,11 @@
     <string name="account_user_name_placeholder">Name</string>
     <string name="account_user_year_placeholder">Year of Birth</string>
     <string name="account_set_photo_button_text">Set photo</string>
+    <string name="match_title_placeholder">Title</string>
+    <string name="match_time_placeholder">Time</string>
+    <string name="match_participants_number_placeholder">Participants number:</string>
+    <string name="create_button_text">Create</string>
+    <string name="match_date_placeholder">Date</string>
+    <string name="pick_date">Pick date</string>
+    <string name="pick_time">pick time</string>
 </resources>
