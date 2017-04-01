@@ -1,4 +1,4 @@
-package com.example.lukas.zagrajmy.Widgets;
+package com.example.lukas.zagrajmy.widgets;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

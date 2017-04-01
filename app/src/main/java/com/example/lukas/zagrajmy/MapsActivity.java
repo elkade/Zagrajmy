@@ -83,21 +83,10 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        // Retrieve the data from the marker.
         Integer id = (Integer) marker.getTag();
-
-        // Check if a click count was set, then display the click count.
-        if (id != null) {
-            marker.setTag(id);
-            Toast.makeText(this,
-                    marker.getTitle() +
-                            " has been clicked. Id:  " + id,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        // Return false to indicate that we have not consumed the event and that we wish
-        // for the default behavior to occur (which is for the camera to move such that the
-        // marker is centered and for the marker's info window to open, if it has one).
+        Intent intent = new Intent(this, MatchActivity.class);
+        intent.putExtra("match_id", id);
+        startActivity(intent);
         return false;
     }
 

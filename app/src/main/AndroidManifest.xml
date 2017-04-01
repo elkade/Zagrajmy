@@ -40,10 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AccountActivity"></activity>
-        <activity android:name=".AddMatchActivity">
-
-        </activity>
+        <activity android:name=".AccountActivity" />
+        <activity android:name=".AddMatchActivity"></activity>
+        <activity android:name=".MatchActivity"></activity>
     </application>
 
 </manifest>

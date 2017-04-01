@@ -10,12 +10,11 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.lukas.zagrajmy.Widgets.DatePickerFragment;
-import com.example.lukas.zagrajmy.Widgets.TimePickerFragment;
+import com.example.lukas.zagrajmy.widgets.DatePickerFragment;
+import com.example.lukas.zagrajmy.widgets.TimePickerFragment;
 import com.example.lukas.zagrajmy.model.Match;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import butterknife.BindView;
