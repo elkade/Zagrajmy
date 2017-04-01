@@ -1,5 +1,6 @@
 package com.example.lukas.zagrajmy;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -102,9 +103,18 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
 
     @Override
     public void onMapClick(LatLng latLng) {
-        Marker mMarker = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("Bubu"));
-        mMarker.setTag(0);
+        Intent intent = new Intent(this, AddMatchActivity.class);
+        intent.putExtra("latLng", latLng);
+        startActivityForResult(intent, 1);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            Match match = (Match)data.getParcelableExtra("match");
+            Marker mMarker = mMap.addMarker(new MarkerOptions()
+                    .position(match.getLatLng())
+                    .title(match.getName()));
+            mMarker.setTag(0);
+        }
     }
 }

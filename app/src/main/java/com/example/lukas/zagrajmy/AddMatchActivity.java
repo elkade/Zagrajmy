@@ -1,5 +1,7 @@
 package com.example.lukas.zagrajmy;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,11 @@ import android.widget.Toast;
 
 import com.example.lukas.zagrajmy.Widgets.DatePickerFragment;
 import com.example.lukas.zagrajmy.Widgets.TimePickerFragment;
+import com.example.lukas.zagrajmy.model.Match;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,12 +29,19 @@ public class AddMatchActivity extends AppCompatActivity {
     Button pickDateButton;
     @BindView(R.id.participants_number_spinner)
     Spinner participantsNumberSpinner;
+
+    Match mMatch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_match);
         ButterKnife.bind(this);
         createSpinner();
+        mMatch = new Match();
+
+        LatLng latLng = getIntent().getParcelableExtra("latLng");
+        mMatch.setLatLng(latLng);
     }
 
     private void createSpinner() {
@@ -52,10 +66,20 @@ public class AddMatchActivity extends AppCompatActivity {
     }
 
     public void setDate(int year, int month, int day) {
+        mMatch.setDate(new GregorianCalendar(year, month, day).getTime());
         Toast.makeText(this, "Date: "+year+month+day,Toast.LENGTH_LONG).show();
     }
 
     public void setTime(int hourOfDay, int minute) {
         Toast.makeText(this, "Time: "+hourOfDay+minute,Toast.LENGTH_LONG).show();
+    }
+    @OnClick(R.id.match_create_button)
+    public void onClickCreateButton(){
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("match", mMatch);
+        setResult(Activity.RESULT_OK, resultIntent);
+
+        finish();
     }
 }
