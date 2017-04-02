@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
 public class Match implements Parcelable {
     private int id;
     private LatLng latLng;
-    private String name;
+    private String title;
     private String description;
     private int authorId;
     private ArrayList<Integer> participantsIds;
@@ -24,15 +23,15 @@ public class Match implements Parcelable {
 
     }
 
-    public Match(int id, LatLng latLng, String name){
+    public Match(int id, LatLng latLng, String title){
         this.id = id;
         this.latLng = latLng;
-        this.name = name;
+        this.title = title;
     }
 
     public Match(Parcel in) {
         this.id = in.readInt();
-        this.name = in.readString();
+        this.title = in.readString();
         this.description = in.readString();
 
 
@@ -56,12 +55,12 @@ public class Match implements Parcelable {
         this.latLng = latLng;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -112,7 +111,7 @@ public class Match implements Parcelable {
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(id);
-        out.writeString(name);
+        out.writeString(title);
         out.writeString(description);
         out.writeInt(authorId);
         out.writeSerializable(participantsIds);

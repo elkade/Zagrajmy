@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 public class User {
     private int id;
     private String name;
-    private int year;
     private Bitmap photo;
 
     public int getId() {
@@ -26,14 +25,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public Bitmap getPhoto() {

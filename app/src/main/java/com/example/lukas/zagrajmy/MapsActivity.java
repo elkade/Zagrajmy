@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.services.AppService;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -73,7 +71,7 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
         for (Match match: matches) {
             Marker mMarker = mMap.addMarker(new MarkerOptions()
                     .position(match.getLatLng())
-                    .title(match.getName()));
+                    .title(match.getTitle()));
             mMarker.setTag(match.getId());
         }
 
@@ -86,7 +84,7 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        Integer id = (Integer) marker.getTag();
+        Integer id = 1;//(Integer) marker.getTag();
         Intent intent = new Intent(this, MatchActivity.class);
         intent.putExtra("match_id", id);
         startActivity(intent);
@@ -105,7 +103,7 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
             Match match = (Match)data.getParcelableExtra("match");
             Marker mMarker = mMap.addMarker(new MarkerOptions()
                     .position(match.getLatLng())
-                    .title(match.getName()));
+                    .title(match.getTitle()));
             mMarker.setTag(0);
         }
     }

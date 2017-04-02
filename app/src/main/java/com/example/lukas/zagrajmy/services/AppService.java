@@ -1,11 +1,20 @@
 package com.example.lukas.zagrajmy.services;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.lukas.zagrajmy.R;
 import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.model.User;
+import com.example.lukas.zagrajmy.utils.MySingleton;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +45,8 @@ public class AppService {
 
     }
 
-    public Match getMatch(int id){
-        return null;
+    public Match getMatch(int id, Context ctx){
+return null;
     }
 
     public List<Match> getMatches(/*long latitude, long longitude, long dx, long dy*/){
