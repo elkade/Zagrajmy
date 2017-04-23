@@ -28,9 +28,9 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         GoogleMap.OnMarkerClickListener,
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
-    private static final LatLng PERTH = new LatLng(-31.952854, 115.857342);
-    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
-    private static final LatLng BRISBANE = new LatLng(-27.47093, 153.0235);
+    private static final LatLng PERTH = new LatLng(52.217303, 21.027781);
+    private static final LatLng SYDNEY = new LatLng(52.226259, 21.230883);
+    private static final LatLng BRISBANE = new LatLng(52.127118, 20.654511);
 
     private Marker mPerth;
     private Marker mSydney;
@@ -48,7 +48,6 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        new AsyncCaller().execute();
 
         SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
         double longitude = settings.getFloat("longitude", 0);
@@ -62,43 +61,16 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
                     .build();
     }
 
-    /** Called when the map is ready. */
     @Override
     public void onMapReady(GoogleMap map) {
-
-        AppService service = AppService.getService();
-
         mMap = map;
 
-        // Add some markers to the map, and add a data object to each marker.
-        mPerth = mMap.addMarker(new MarkerOptions()
-                .position(PERTH)
-                .title("Perth"));
-        mPerth.setTag(0);
+        new AsyncCaller().execute();
+    }
 
-        mSydney = mMap.addMarker(new MarkerOptions()
-                .position(SYDNEY)
-                .title("Sydney"));
-        mSydney.setTag(1);
-
-        mBrisbane = mMap.addMarker(new MarkerOptions()
-                .position(BRISBANE)
-                .title("Brisbane"));
-        mBrisbane.setTag(2);
-
-        List<Match> matches = service.getMatches();
-
-        for (Match match: matches) {
-            Marker mMarker = mMap.addMarker(new MarkerOptions()
-                    .position(match.getLatLng())
-                    .title(match.getTitle()));
-            mMarker.setTag(match.getId());
-        }
-
-        mMap.setOnMarkerClickListener(this);
-        mMap.setOnMapClickListener(this);
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
-
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -178,9 +150,36 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
+            AppService service = AppService.getService();
 
-            //this method will be running on UI thread
+            // Add some markers to the map, and add a data object to each marker.
+            mPerth = mMap.addMarker(new MarkerOptions()
+                    .position(PERTH)
+                    .title("Perth"));
+            mPerth.setTag(0);
 
+            mSydney = mMap.addMarker(new MarkerOptions()
+                    .position(SYDNEY)
+                    .title("Sydney"));
+            mSydney.setTag(1);
+
+            mBrisbane = mMap.addMarker(new MarkerOptions()
+                    .position(BRISBANE)
+                    .title("Brisbane"));
+            mBrisbane.setTag(2);
+
+            List<Match> matches = service.getMatches();
+
+            for (Match match: matches) {
+                Marker mMarker = mMap.addMarker(new MarkerOptions()
+                        .position(match.getLatLng())
+                        .title(match.getTitle()));
+                mMarker.setTag(match.getId());
+            }
+
+            mMap.setOnMarkerClickListener(MapsActivity.this);
+            mMap.setOnMapClickListener(MapsActivity.this);
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
             pdLoading.dismiss();
         }
 
