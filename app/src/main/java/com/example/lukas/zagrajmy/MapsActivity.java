@@ -2,22 +2,29 @@ package com.example.lukas.zagrajmy;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.services.AppService;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-public class MapsActivity  extends FragmentActivity implements// czy to ma backward compatibility????
+public class MapsActivity  extends AppCompatActivity implements// czy to ma backward compatibility????
         GoogleMap.OnMarkerClickListener,
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -31,6 +38,8 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
 
     private GoogleMap mMap;
 
+    private CameraPosition lastCameraPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +49,17 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         new AsyncCaller().execute();
+
+        SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
+        double longitude = settings.getFloat("longitude", 0);
+        double latitude = settings.getFloat("latitude", 0);
+        float zoom = settings.getFloat("zoom", 1);
+            LatLng startPosition = new LatLng(latitude, longitude);
+
+            lastCameraPosition = new CameraPosition.Builder()
+                    .target(startPosition)
+                    .zoom(zoom)
+                    .build();
     }
 
     /** Called when the map is ready. */
@@ -75,9 +95,29 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
             mMarker.setTag(match.getId());
         }
 
-        // Set a listener for marker click.
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(this);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.go_to_profile) {
+            Intent intent = new Intent(this, AccountActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /** Called when the user clicks a marker. */
@@ -144,5 +184,20 @@ public class MapsActivity  extends FragmentActivity implements// czy to ma backw
             pdLoading.dismiss();
         }
 
+    }
+    @Override
+    protected void onDestroy() {
+        CameraPosition mMyCam = mMap.getCameraPosition();
+        double longitude = mMyCam.target.longitude;
+        double latitude = mMyCam.target.latitude;
+        float zoom = mMyCam.zoom;
+
+        SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putFloat("longitude", (float)longitude);
+        editor.putFloat("latitude", (float)latitude);
+        editor.putFloat("zoom", zoom);
+        editor.apply();
+        super.onDestroy();
     }
 }
