@@ -32,6 +32,6 @@ public class User {
     }
 
     public String getPhotoUrl() {
-        return "http://www.zastavki.com/pictures/originals/2014/Girls_Movie_star_Sasha_Grey__074153_.jpg";
+        return "http://elkade.pythonanywhere.com/images/1";
     }
 }
