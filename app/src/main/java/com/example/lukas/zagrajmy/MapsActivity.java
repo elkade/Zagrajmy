@@ -3,14 +3,18 @@ package com.example.lukas.zagrajmy;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.services.AppService;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,24 +25,23 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
-public class MapsActivity  extends AppCompatActivity implements// czy to ma backward compatibility????
+public class MapsActivity extends AppCompatActivity implements// czy to ma backward compatibility????
         GoogleMap.OnMarkerClickListener,
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
-
-    private static final LatLng PERTH = new LatLng(52.217303, 21.027781);
-    private static final LatLng SYDNEY = new LatLng(52.226259, 21.230883);
-    private static final LatLng BRISBANE = new LatLng(52.127118, 20.654511);
-
-    private Marker mPerth;
-    private Marker mSydney;
-    private Marker mBrisbane;
 
     private GoogleMap mMap;
 
     private CameraPosition lastCameraPosition;
+    ProgressDialog pdLoading;
+
+    RequestQueue mRequestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,19 +56,21 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         double longitude = settings.getFloat("longitude", 0);
         double latitude = settings.getFloat("latitude", 0);
         float zoom = settings.getFloat("zoom", 1);
-            LatLng startPosition = new LatLng(latitude, longitude);
+        LatLng startPosition = new LatLng(latitude, longitude);
 
-            lastCameraPosition = new CameraPosition.Builder()
-                    .target(startPosition)
-                    .zoom(zoom)
-                    .build();
+        lastCameraPosition = new CameraPosition.Builder()
+                .target(startPosition)
+                .zoom(zoom)
+                .build();
+
+        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
+        mRequestQueue.start();
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-
-        new AsyncCaller().execute();
+        refresh();
     }
 
     @Override
@@ -92,11 +97,13 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         return super.onOptionsItemSelected(item);
     }
 
-    /** Called when the user clicks a marker. */
+    /**
+     * Called when the user clicks a marker.
+     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        Integer id = 1;//(Integer) marker.getTag();
+        Integer id = (Integer) marker.getTag();
         Intent intent = new Intent(this, MatchActivity.class);
         intent.putExtra("match_id", id);
         startActivity(intent);
@@ -109,10 +116,12 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         intent.putExtra("latLng", latLng);
         startActivityForResult(intent, 1);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            Match match = (Match)data.getParcelableExtra("match");
+            Match match = (Match) data.getParcelableExtra("match");
+
             Marker mMarker = mMap.addMarker(new MarkerOptions()
                     .position(match.getLatLng())
                     .title(match.getTitle()));
@@ -120,70 +129,6 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
         }
     }
 
-
-    private class AsyncCaller extends AsyncTask<Void, Void, Void>
-    {
-        ProgressDialog pdLoading = new ProgressDialog(MapsActivity.this);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            //this method will be running on UI thread
-            pdLoading.setMessage("Loading...");
-            pdLoading.show();
-        }
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //this method will be running on background thread so don't update UI frome here
-            //do your long running http tasks here,you dont want to pass argument and u can access the parent class' variable url over here
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            AppService service = AppService.getService();
-
-            // Add some markers to the map, and add a data object to each marker.
-            mPerth = mMap.addMarker(new MarkerOptions()
-                    .position(PERTH)
-                    .title("Perth"));
-            mPerth.setTag(0);
-
-            mSydney = mMap.addMarker(new MarkerOptions()
-                    .position(SYDNEY)
-                    .title("Sydney"));
-            mSydney.setTag(1);
-
-            mBrisbane = mMap.addMarker(new MarkerOptions()
-                    .position(BRISBANE)
-                    .title("Brisbane"));
-            mBrisbane.setTag(2);
-
-            List<Match> matches = service.getMatches();
-
-            for (Match match: matches) {
-                Marker mMarker = mMap.addMarker(new MarkerOptions()
-                        .position(match.getLatLng())
-                        .title(match.getTitle()));
-                mMarker.setTag(match.getId());
-            }
-
-            mMap.setOnMarkerClickListener(MapsActivity.this);
-            mMap.setOnMapClickListener(MapsActivity.this);
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
-            pdLoading.dismiss();
-        }
-
-    }
     @Override
     protected void onDestroy() {
         CameraPosition mMyCam = mMap.getCameraPosition();
@@ -193,10 +138,59 @@ public class MapsActivity  extends AppCompatActivity implements// czy to ma back
 
         SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat("longitude", (float)longitude);
-        editor.putFloat("latitude", (float)latitude);
+        editor.putFloat("longitude", (float) longitude);
+        editor.putFloat("latitude", (float) latitude);
         editor.putFloat("zoom", zoom);
         editor.apply();
         super.onDestroy();
+    }
+
+    private void refresh() {
+        Log.i("", "refreshing");
+        pdLoading = new ProgressDialog(MapsActivity.this);
+        pdLoading.setMessage("Loading...");
+        pdLoading.show();
+        String url = "http://elkade.pythonanywhere.com/matches";
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, url, (String) null,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                handleResonse(response);
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("", error.toString());
+                        pdLoading.dismiss();
+                    }
+                });
+        Log.i("", "sending request");
+        mRequestQueue.add(jsObjRequest);
+    }
+
+    private void handleResonse(JSONArray response) {
+        Log.i("", "on response");
+        pdLoading.dismiss();
+        String json = response.toString();
+        Gson g = new Gson();
+        Log.i("", json);
+        try {
+            List<Match> matches = g.fromJson(json, new TypeToken<List<Match>>() {
+            }.getType());
+            mMap.clear();
+            for (Match match : matches) {
+                Marker mMarker = mMap.addMarker(new MarkerOptions()
+                        .position(match.getLatLng())
+                        .title(match.getTitle()));
+                mMarker.setTag(match.getId());
+            }
+            mMap.setOnMarkerClickListener(MapsActivity.this);
+            mMap.setOnMapClickListener(MapsActivity.this);
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(lastCameraPosition));
+        } catch (Exception ex) {
+            Log.e("", ex.toString());
+        }
     }
 }

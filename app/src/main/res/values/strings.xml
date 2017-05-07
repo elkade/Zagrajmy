@@ -18,4 +18,6 @@
     <string name="match_date_text">Date:</string>
     <string name="match_description_text">Description</string>
     <string name="match_participants_text">Participants:</string>
+    <string name="set_date">Date cannot be empty</string>
+    <string name="match_title_text">Title</string>
 </resources>

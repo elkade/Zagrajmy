@@ -43,6 +43,9 @@ public class Match implements Parcelable {
     }
 
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }

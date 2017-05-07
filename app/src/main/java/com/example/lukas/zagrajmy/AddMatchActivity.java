@@ -5,17 +5,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.widgets.DatePickerFragment;
 import com.example.lukas.zagrajmy.widgets.TimePickerFragment;
-import com.example.lukas.zagrajmy.model.Match;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
 
-import java.util.GregorianCalendar;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +39,9 @@ public class AddMatchActivity extends AppCompatActivity {
     Spinner participantsNumberSpinner;
 
     Match mMatch;
+    RequestQueue mRequestQueue;
+
+    Calendar mCal = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +53,9 @@ public class AddMatchActivity extends AppCompatActivity {
 
         LatLng latLng = getIntent().getParcelableExtra("latLng");
         mMatch.setLatLng(latLng);
+        mCal.setTimeInMillis(0);
+        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
+        mRequestQueue.start();
     }
 
     private void createSpinner() {
@@ -65,17 +80,45 @@ public class AddMatchActivity extends AppCompatActivity {
     }
 
     public void setDate(int year, int month, int day) {
-        mMatch.setDate(new GregorianCalendar(year, month, day).getTime());
-        Toast.makeText(this, "Date: "+year+month+day,Toast.LENGTH_LONG).show();
+        mCal.set(Calendar.YEAR, year);
+        mCal.set(Calendar.MONTH, month);
+        mCal.set(Calendar.DAY_OF_MONTH, day);
     }
 
     public void setTime(int hourOfDay, int minute) {
-        Toast.makeText(this, "Time: "+hourOfDay+minute,Toast.LENGTH_LONG).show();
+        mCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCal.set(Calendar.MINUTE, minute);
     }
     @OnClick(R.id.match_create_button)
     public void onClickCreateButton(){
+        mMatch.setDate(mCal.getTime());
+
+        String url = "http://elkade.pythonanywhere.com/matches";
+        Gson g = new Gson();
+        String jsonString = g.toJson(mMatch);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, url, jsonString, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        String json = response.toString();
+                        Gson g = new Gson();
+
+                        mMatch = g.fromJson(json, Match.class);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("", error.toString());
+                    }
+                });
+
+        mRequestQueue.add(jsObjRequest);
 
         Intent resultIntent = new Intent();
+
         resultIntent.putExtra("match", mMatch);
         setResult(Activity.RESULT_OK, resultIntent);
 

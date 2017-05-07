@@ -6,16 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
-import com.example.lukas.zagrajmy.utils.MySingleton;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,13 +29,14 @@ public class MatchActivity extends AppCompatActivity {
 
     private Match mMatch;
 
-    @BindView(R.id.match_description)
-    TextView mDescriptionView;
+    @BindView(R.id.match_title)
+    TextView mTitleView;
 
     @BindView(R.id.match_date)
     TextView mDateView;
 
     ProgressDialog pdLoading;
+    RequestQueue mRequestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +49,18 @@ public class MatchActivity extends AppCompatActivity {
         String url = "http://elkade.pythonanywhere.com/matches/" + matchId;
         //pdLoading.setMessage("Loading...");
         //pdLoading.show();
+        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
+        mRequestQueue.start();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        ObjectMapper objectMapper = new ObjectMapper();
                         String json = response.toString();
-                        try {
-                            mMatch = objectMapper.readValue(json, Match.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        Gson g = new Gson();
+
+                        mMatch = g.fromJson(json, Match.class);
                         //pdLoading.dismiss();
 
                         fillView();
@@ -74,12 +74,12 @@ public class MatchActivity extends AppCompatActivity {
                     }
                 });
 
-        MySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+        mRequestQueue.add(jsObjRequest);
 
     }
 
     private void fillView() {
-        mDescriptionView.setText(mMatch.getTitle());
+        mTitleView.setText(mMatch.getTitle());
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date date = mMatch.getDate();
         String formattedDate = df.format(date);
