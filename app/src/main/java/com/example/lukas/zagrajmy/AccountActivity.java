@@ -1,6 +1,7 @@
 package com.example.lukas.zagrajmy;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -54,6 +55,9 @@ public class AccountActivity extends BaseActivity {
                             String json = response.toString();
                             Gson g = new Gson();
                             mUser = g.fromJson(json, User.class);
+
+                            userNameText.setText(mUser.getName());
+
                             ImageLoader imageLoader = volley.getImageLoader();
                             imageLoader.get(url + "/images/" + mUser.getId(), new ImageLoader.ImageListener() {
                                 @Override
@@ -93,6 +97,65 @@ public class AccountActivity extends BaseActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             userPhotoView.setImageBitmap(imageBitmap);
             mUser.setPhoto(imageBitmap);
+        }
+    }
+
+    @OnClick(R.id.account_save_button)
+    public void onClickSaveButton() {
+        if(mUser.getId()!=-1){
+            mUser.setName(userNameText.getText().toString());
+            //setPhoto
+            String url = getServiceUrl();
+            Gson g = new Gson();
+            String jsonString = g.toJson(mUser);
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.PUT, url + "/users/"+mUser.getId(), jsonString, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            SharedPreferences settings = getSharedPreferences("APP_STATE", 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putInt("userId", mUser.getId());
+                            editor.apply();
+                            finish();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    });
+
+            volley.getRequestQueue().add(jsObjRequest);
+        }
+        else {
+            //ogarnąć cofanie z tego ekranu
+            //check if name set
+            mUser.setName(userNameText.getText().toString());
+            //setPhoto
+            String url = getServiceUrl();
+            Gson g = new Gson();
+            String jsonString = g.toJson(mUser);
+
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.POST, url + "/users", jsonString, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String json = response.toString();
+                            Gson g = new Gson();
+                            mUser = g.fromJson(json, User.class);
+                            SharedPreferences settings = getSharedPreferences("APP_STATE", 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putInt("userId", mUser.getId());
+                            editor.apply();
+                            finish();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                        }
+                    });
+
+            volley.getRequestQueue().add(jsObjRequest);
         }
     }
 }

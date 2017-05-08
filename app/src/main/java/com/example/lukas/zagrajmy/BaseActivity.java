@@ -20,9 +20,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected int getCurrentUserIdFromCache(){
-        return 1;
-        //int userId = settings.getInt("userId", -1);
-        //return userId;
+        int userId = settings.getInt("userId", -1);
+        return userId;
     }
 
     protected void redirectIfUserNotRegistered(){

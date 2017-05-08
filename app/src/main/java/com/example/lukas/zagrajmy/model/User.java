@@ -3,6 +3,11 @@ package com.example.lukas.zagrajmy.model;
 import android.graphics.Bitmap;
 
 public class User {
+
+    public User(){
+        id = -1;
+    }
+
     private int id;
     private String name;
     private Bitmap photo;
