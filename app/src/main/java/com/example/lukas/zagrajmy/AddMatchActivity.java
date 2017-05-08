@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddMatchActivity extends AppCompatActivity {
+public class AddMatchActivity extends BaseActivity {
     @BindView(R.id.match_time_picker_button)
     Button pickTimeButton;
     @BindView(R.id.match_date_picker_button)
@@ -39,7 +39,6 @@ public class AddMatchActivity extends AppCompatActivity {
     Spinner participantsNumberSpinner;
 
     Match mMatch;
-    RequestQueue mRequestQueue;
 
     Calendar mCal = Calendar.getInstance();
 
@@ -54,8 +53,6 @@ public class AddMatchActivity extends AppCompatActivity {
         LatLng latLng = getIntent().getParcelableExtra("latLng");
         mMatch.setLatLng(latLng);
         mCal.setTimeInMillis(0);
-        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
-        mRequestQueue.start();
     }
 
     private void createSpinner() {
@@ -98,24 +95,20 @@ public class AddMatchActivity extends AppCompatActivity {
         String jsonString = g.toJson(mMatch);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonString, new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
-
                         String json = response.toString();
                         Gson g = new Gson();
-
                         mMatch = g.fromJson(json, Match.class);
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e("", error.toString());
                     }
                 });
 
-        mRequestQueue.add(jsObjRequest);
+        volley.getRequestQueue().add(jsObjRequest);
 
         Intent resultIntent = new Intent();
 

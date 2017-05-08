@@ -4,19 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
-import com.example.lukas.zagrajmy.services.AppService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,7 +29,7 @@ import org.json.JSONArray;
 
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements// czy to ma backward compatibility????
+public class MapsActivity extends BaseActivity implements// czy to ma backward compatibility????
         GoogleMap.OnMarkerClickListener,
         OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -41,30 +38,16 @@ public class MapsActivity extends AppCompatActivity implements// czy to ma backw
     private CameraPosition lastCameraPosition;
     ProgressDialog pdLoading;
 
-    RequestQueue mRequestQueue;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
-        double longitude = settings.getFloat("longitude", 0);
-        double latitude = settings.getFloat("latitude", 0);
-        float zoom = settings.getFloat("zoom", 1);
-        LatLng startPosition = new LatLng(latitude, longitude);
-
-        lastCameraPosition = new CameraPosition.Builder()
-                .target(startPosition)
-                .zoom(zoom)
-                .build();
-
-        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
-        mRequestQueue.start();
+        lastCameraPosition = getLastCameraPosition();
     }
 
     @Override
@@ -97,9 +80,6 @@ public class MapsActivity extends AppCompatActivity implements// czy to ma backw
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Called when the user clicks a marker.
-     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
@@ -119,29 +99,19 @@ public class MapsActivity extends AppCompatActivity implements// czy to ma backw
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && requestCode == 1) {
             Match match = (Match) data.getParcelableExtra("match");
 
             Marker mMarker = mMap.addMarker(new MarkerOptions()
                     .position(match.getLatLng())
                     .title(match.getTitle()));
-            mMarker.setTag(0);
+            mMarker.setTag(match.getId());
         }
     }
 
     @Override
     protected void onDestroy() {
-        CameraPosition mMyCam = mMap.getCameraPosition();
-        double longitude = mMyCam.target.longitude;
-        double latitude = mMyCam.target.latitude;
-        float zoom = mMyCam.zoom;
-
-        SharedPreferences settings = getSharedPreferences("MAP_STATE", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat("longitude", (float) longitude);
-        editor.putFloat("latitude", (float) latitude);
-        editor.putFloat("zoom", zoom);
-        editor.apply();
+        saveCameraPosition();
         super.onDestroy();
     }
 
@@ -167,7 +137,7 @@ public class MapsActivity extends AppCompatActivity implements// czy to ma backw
                     }
                 });
         Log.i("", "sending request");
-        mRequestQueue.add(jsObjRequest);
+        volley.getRequestQueue().add(jsObjRequest);
     }
 
     private void handleResonse(JSONArray response) {
@@ -192,5 +162,32 @@ public class MapsActivity extends AppCompatActivity implements// czy to ma backw
         } catch (Exception ex) {
             Log.e("", ex.toString());
         }
+    }
+
+    protected CameraPosition getLastCameraPosition() {
+        SharedPreferences settings = getSharedPreferences("APP_STATE", 0);
+        double longitude = settings.getFloat("longitude", 0);
+        double latitude = settings.getFloat("latitude", 0);
+        float zoom = settings.getFloat("zoom", 1);
+        LatLng startPosition = new LatLng(latitude, longitude);
+
+        return new CameraPosition.Builder()
+                .target(startPosition)
+                .zoom(zoom)
+                .build();
+    }
+
+    protected void saveCameraPosition() {
+        CameraPosition mMyCam = mMap.getCameraPosition();
+        double longitude = mMyCam.target.longitude;
+        double latitude = mMyCam.target.latitude;
+        float zoom = mMyCam.zoom;
+
+        SharedPreferences settings = getSharedPreferences("APP_STATE", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putFloat("longitude", (float) longitude);
+        editor.putFloat("latitude", (float) latitude);
+        editor.putFloat("zoom", zoom);
+        editor.apply();
     }
 }

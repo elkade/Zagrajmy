@@ -5,7 +5,7 @@
 
     <string name="account_user_name_placeholder">Name</string>
     <string name="account_user_year_placeholder">Year of Birth</string>
-    <string name="account_set_photo_button_text">Set photo</string>
+    <string name="account_set_photo_button_text">Make photo</string>
     <string name="match_title_placeholder">Title</string>
     <string name="match_time_placeholder">Time</string>
     <string name="match_participants_number_placeholder">Participants number:</string>
@@ -20,4 +20,5 @@
     <string name="match_participants_text">Participants:</string>
     <string name="set_date">Date cannot be empty</string>
     <string name="match_title_text">Title</string>
+    <string name="account_save_button_text">Save</string>
 </resources>

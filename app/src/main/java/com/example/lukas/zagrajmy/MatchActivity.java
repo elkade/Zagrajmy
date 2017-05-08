@@ -23,7 +23,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MatchActivity extends AppCompatActivity {
+public class MatchActivity extends BaseActivity {
 
     private int matchId;
 
@@ -36,7 +36,6 @@ public class MatchActivity extends AppCompatActivity {
     TextView mDateView;
 
     ProgressDialog pdLoading;
-    RequestQueue mRequestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,37 +43,23 @@ public class MatchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_match);
         ButterKnife.bind(this);
         matchId = getIntent().getIntExtra("match_id", -1);
-        //pdLoading  = new ProgressDialog(this);
-        //new MatchActivity.AsyncCaller().execute();
         String url = "http://elkade.pythonanywhere.com/matches/" + matchId;
-        //pdLoading.setMessage("Loading...");
-        //pdLoading.show();
-        mRequestQueue = Volley.newRequestQueue(this.getApplicationContext());
-        mRequestQueue.start();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
-
                         String json = response.toString();
                         Gson g = new Gson();
-
                         mMatch = g.fromJson(json, Match.class);
-                        //pdLoading.dismiss();
-
                         fillView();
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //pdLoading.dismiss();
-
                     }
                 });
-
-        mRequestQueue.add(jsObjRequest);
+        volley.getRequestQueue().add(jsObjRequest);
 
     }
 

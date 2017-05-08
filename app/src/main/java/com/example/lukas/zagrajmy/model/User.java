@@ -2,10 +2,6 @@ package com.example.lukas.zagrajmy.model;
 
 import android.graphics.Bitmap;
 
-/**
- * Created by Lukas on 2017-03-23.
- */
-
 public class User {
     private int id;
     private String name;
@@ -31,7 +27,8 @@ public class User {
         return photo;
     }
 
-    public String getPhotoUrl() {
-        return "http://elkade.pythonanywhere.com/images/1";
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
     }
+
 }
