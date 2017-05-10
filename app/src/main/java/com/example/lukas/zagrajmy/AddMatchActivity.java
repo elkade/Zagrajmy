@@ -107,7 +107,7 @@ public class AddMatchActivity extends BaseActivity {
                         Log.e("", error.toString());
                     }
                 });
-
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
 
         Intent resultIntent = new Intent();

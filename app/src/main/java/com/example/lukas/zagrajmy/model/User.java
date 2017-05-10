@@ -1,6 +1,9 @@
 package com.example.lukas.zagrajmy.model;
 
 import android.graphics.Bitmap;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 
 public class User {
 
@@ -10,7 +13,7 @@ public class User {
 
     private int id;
     private String name;
-    private Bitmap photo;
+    private String photo;
 
     public int getId() {
         return id;
@@ -28,12 +31,18 @@ public class User {
         this.name = name;
     }
 
-    public Bitmap getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
     public void setPhoto(Bitmap photo) {
-        this.photo = photo;
+        if(photo==null)
+            return;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        this.photo = encodedImage;
     }
 
 }

@@ -137,6 +137,7 @@ public class MapsActivity extends BaseActivity implements// czy to ma backward c
                     }
                 });
         Log.i("", "sending request");
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
     }
 

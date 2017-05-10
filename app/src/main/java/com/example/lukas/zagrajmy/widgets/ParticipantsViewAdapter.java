@@ -14,6 +14,9 @@ import com.squareup.picasso.Picasso;
 import java.util.Collections;
 import java.util.List;
 
+import static com.squareup.picasso.MemoryPolicy.NO_CACHE;
+import static com.squareup.picasso.MemoryPolicy.NO_STORE;
+
 public class ParticipantsViewAdapter extends RecyclerView.Adapter<ParticipantsViewHolder> {
 
     List<Participant> list = Collections.emptyList();
@@ -41,6 +44,7 @@ String imagePath;
 
         Picasso.with(context)
                 .load(imagePath + list.get(position).getId())
+                .memoryPolicy(NO_CACHE, NO_STORE)
                 .into(holder.imageView);
     }
 

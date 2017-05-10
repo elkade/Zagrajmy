@@ -83,6 +83,7 @@ public class MatchActivity extends BaseActivity {
                     public void onErrorResponse(VolleyError error) {
                     }
                 });
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
     }
 
@@ -126,6 +127,7 @@ public class MatchActivity extends BaseActivity {
                         Log.e("",error.toString());
                     }
                 });
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
 
     }
@@ -159,6 +161,7 @@ public class MatchActivity extends BaseActivity {
                         Log.e("",error.toString());
                     }
                 });
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
     }
 
@@ -179,6 +182,7 @@ public class MatchActivity extends BaseActivity {
                         Log.e("",error.toString());
                     }
                 });
+        jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
     }
 }

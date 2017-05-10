@@ -77,7 +77,7 @@ public class AccountActivity extends BaseActivity {
                         public void onErrorResponse(VolleyError error) {
                         }
                     });
-
+            jsObjRequest.setShouldCache(false);
             volley.getRequestQueue().add(jsObjRequest);
         }
     }
@@ -124,7 +124,7 @@ public class AccountActivity extends BaseActivity {
                         public void onErrorResponse(VolleyError error) {
                         }
                     });
-
+            jsObjRequest.setShouldCache(false);
             volley.getRequestQueue().add(jsObjRequest);
         }
         else {
@@ -154,7 +154,7 @@ public class AccountActivity extends BaseActivity {
                         public void onErrorResponse(VolleyError error) {
                         }
                     });
-
+            jsObjRequest.setShouldCache(false);
             volley.getRequestQueue().add(jsObjRequest);
         }
     }
