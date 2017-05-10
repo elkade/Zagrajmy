@@ -1,14 +1,28 @@
 package com.example.lukas.zagrajmy.model;
 
 public class Participant {
-    public String title;
-    public String description;
-    public int imageId;
+    public int getId() {
+        return id;
+    }
 
-    public Participant(String title, String description, int imageId) {
-        this.title = title;
-        this.description = description;
-        this.imageId = imageId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int id;
+    public String name;
+
+    public Participant(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
 }

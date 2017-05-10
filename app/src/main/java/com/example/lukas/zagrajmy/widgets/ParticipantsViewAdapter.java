@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.example.lukas.zagrajmy.R;
 import com.example.lukas.zagrajmy.model.Participant;
+import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +18,11 @@ public class ParticipantsViewAdapter extends RecyclerView.Adapter<ParticipantsVi
 
     List<Participant> list = Collections.emptyList();
     Context context;
-
-    public ParticipantsViewAdapter(List<Participant> list, Context context) {
+String imagePath;
+    public ParticipantsViewAdapter(List<Participant> list, Context context, String imagePath) {
         this.list = list;
         this.context = context;
+        this.imagePath = imagePath;
     }
 
     @Override
@@ -35,13 +37,11 @@ public class ParticipantsViewAdapter extends RecyclerView.Adapter<ParticipantsVi
     @Override
     public void onBindViewHolder(ParticipantsViewHolder holder, int position) {
 
-        //Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
-        holder.title.setText(list.get(position).title);
-        holder.description.setText(list.get(position).description);
-        holder.imageView.setImageResource(list.get(position).imageId);
+        holder.name.setText(list.get(position).getName());
 
-        //animate(holder);
-
+        Picasso.with(context)
+                .load(imagePath + list.get(position).getId())
+                .into(holder.imageView);
     }
 
     @Override

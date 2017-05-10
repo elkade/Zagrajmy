@@ -17,6 +17,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
@@ -24,7 +25,9 @@ import com.example.lukas.zagrajmy.model.Participant;
 import com.example.lukas.zagrajmy.widgets.DatePickerFragment;
 import com.example.lukas.zagrajmy.widgets.ParticipantsViewAdapter;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
@@ -65,27 +68,6 @@ public class MatchActivity extends BaseActivity {
         ButterKnife.bind(this);
         matchId = getIntent().getIntExtra("match_id", -1);
         refresh();
-
-        List<Participant> data = fill_with_data();
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.participantsListView);
-        ParticipantsViewAdapter adapter = new ParticipantsViewAdapter(data, getApplication());
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    public List<Participant> fill_with_data() {
-
-        List<Participant> data = new ArrayList<>();
-
-        data.add(new Participant("Batman vs Superman", "Following the destruction of Metropolis, Batman embarks on a personal vendetta against Superman ", R.drawable.common_google_signin_btn_icon_dark));
-        data.add(new Participant("X-Men: Apocalypse", "X-Men: Apocalypse is an upcoming American superhero film based on the X-Men characters that appear in Marvel Comics ", R.drawable.common_google_signin_btn_icon_dark));
-        data.add(new Participant("Captain America: Civil War", "A feud between Captain America and Iron Man leaves the Avengers in turmoil.  ", R.drawable.common_google_signin_btn_icon_dark));
-        data.add(new Participant("Kung Fu Panda 3", "After reuniting with his long-lost father, Po  must train a village of pandas", R.drawable.common_google_signin_btn_icon_dark));
-        data.add(new Participant("Warcraft", "Fleeing their dying home to colonize another, fearsome orc warriors invade the peaceful realm of Azeroth. ", R.drawable.common_google_signin_btn_icon_dark));
-        data.add(new Participant("Alice in Wonderland", "Alice in Wonderland: Through the Looking Glass ", R.drawable.common_google_signin_btn_icon_dark));
-
-        return data;
     }
 
     private void refresh() {
@@ -129,6 +111,35 @@ public class MatchActivity extends BaseActivity {
             mLeaveButton.setVisibility(View.GONE);
             mJoinButton.setVisibility(View.VISIBLE);
         }
+
+        String url = getServiceUrl() + "matches/" + mMatch.getId() + "/participants";
+
+        JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                (Request.Method.GET, url, (String) null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        handleParticipants(response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("",error.toString());
+                    }
+                });
+        volley.getRequestQueue().add(jsObjRequest);
+
+    }
+
+    private void handleParticipants(JSONArray response) {
+        String json = response.toString();
+        Gson g = new Gson();
+        List<Participant> data = g.fromJson(json, new TypeToken<List<Participant>>() {
+        }.getType());
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.participantsListView);
+        ParticipantsViewAdapter adapter = new ParticipantsViewAdapter(data, getApplication(), getServiceUrl() + "images/");
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @OnClick(R.id.match_join_button)

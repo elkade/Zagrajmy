@@ -10,16 +10,12 @@ import com.example.lukas.zagrajmy.R;
 
 public class ParticipantsViewHolder extends RecyclerView.ViewHolder {
 
-    CardView cv;
-    TextView title;
-    TextView description;
+    TextView name;
     ImageView imageView;
 
     ParticipantsViewHolder(View itemView) {
         super(itemView);
-        cv = (CardView) itemView.findViewById(R.id.cardView);
-        title = (TextView) itemView.findViewById(R.id.title);
-        description = (TextView) itemView.findViewById(R.id.description);
-        imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        name = (TextView) itemView.findViewById(R.id.participant_name);
+        imageView = (ImageView) itemView.findViewById(R.id.participant_photo);
     }
 }
