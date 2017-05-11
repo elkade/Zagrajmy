@@ -91,14 +91,14 @@ public class AddMatchActivity extends BaseActivity {
         mMatch.setDate(mCal.getTime());
 
         String url = "http://elkade.pythonanywhere.com/matches";
-        Gson g = new Gson();
+        Gson g = getGson();
         String jsonString = g.toJson(mMatch);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, url, jsonString, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         String json = response.toString();
-                        Gson g = new Gson();
+                        Gson g = getGson();
                         mMatch = g.fromJson(json, Match.class);
                     }
                 }, new Response.ErrorListener() {

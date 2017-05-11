@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
+import com.example.lukas.zagrajmy.services.NotificationService;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,6 +49,15 @@ public class MapsActivity extends BaseActivity implements// czy to ma backward c
         mapFragment.getMapAsync(this);
 
         lastCameraPosition = getLastCameraPosition();
+
+        Intent serviceIntent = new Intent(this, NotificationService.class);
+        startService(serviceIntent);
+        int matchId = getIntent().getIntExtra("match_id", -1);
+        if(matchId != -1){
+            Intent matchIntent = new Intent(this, MatchActivity.class);
+            matchIntent.putExtra("match_id", matchId);
+            startActivity(matchIntent);
+        }
     }
 
     @Override
@@ -145,7 +155,7 @@ public class MapsActivity extends BaseActivity implements// czy to ma backward c
         Log.i("", "on response");
         pdLoading.dismiss();
         String json = response.toString();
-        Gson g = new Gson();
+        Gson g = getGson();
         Log.i("", json);
         try {
             List<Match> matches = g.fromJson(json, new TypeToken<List<Match>>() {

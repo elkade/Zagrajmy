@@ -88,53 +88,57 @@ public class MatchActivity extends BaseActivity {
     }
 
     private void handleMatchResponse(JSONObject response) {
-        String json = response.toString();
-        Gson g = new Gson();
-        mMatch = g.fromJson(json, Match.class);
-        mTitleView.setText(mMatch.getTitle());
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-        Date date = mMatch.getDate();
-        String formattedDate = df.format(date);
-        mDateView.setText(formattedDate);
-        List<Integer> participants = mMatch.getParticipantsIds();
-        int userId = getCurrentUserIdFromCache();
-        boolean userParticipates = false;
-        for(Integer p : participants){
-            if(p.equals(userId)) {
-                userParticipates = true;
-                break;
+        try {
+            String json = response.toString();
+            Gson g = getGson();
+            mMatch = g.fromJson(json, Match.class);
+            mTitleView.setText(mMatch.getTitle());
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+            Date date = mMatch.getDate();
+            String formattedDate = df.format(date);
+            mDateView.setText(formattedDate);
+            List<Integer> participants = mMatch.getParticipantsIds();
+            int userId = getCurrentUserIdFromCache();
+            boolean userParticipates = false;
+            for (Integer p : participants) {
+                if (p.equals(userId)) {
+                    userParticipates = true;
+                    break;
+                }
             }
+            if (userParticipates) {
+                mLeaveButton.setVisibility(View.VISIBLE);
+                mJoinButton.setVisibility(View.GONE);
+            } else {
+                mLeaveButton.setVisibility(View.GONE);
+                mJoinButton.setVisibility(View.VISIBLE);
+            }
+
+            String url = getServiceUrl() + "matches/" + mMatch.getId() + "/participants";
+
+            JsonArrayRequest jsObjRequest = new JsonArrayRequest
+                    (Request.Method.GET, url, (String) null, new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            handleParticipants(response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("", error.toString());
+                        }
+                    });
+            jsObjRequest.setShouldCache(false);
+            volley.getRequestQueue().add(jsObjRequest);
         }
-        if (userParticipates) {
-            mLeaveButton.setVisibility(View.VISIBLE);
-            mJoinButton.setVisibility(View.GONE);
-        } else {
-            mLeaveButton.setVisibility(View.GONE);
-            mJoinButton.setVisibility(View.VISIBLE);
+        catch(Exception ex){
+            Log.e("", ex.toString());
         }
-
-        String url = getServiceUrl() + "matches/" + mMatch.getId() + "/participants";
-
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest
-                (Request.Method.GET, url, (String) null, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        handleParticipants(response);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("",error.toString());
-                    }
-                });
-        jsObjRequest.setShouldCache(false);
-        volley.getRequestQueue().add(jsObjRequest);
-
     }
 
     private void handleParticipants(JSONArray response) {
         String json = response.toString();
-        Gson g = new Gson();
+        Gson g = getGson();
         List<Participant> data = g.fromJson(json, new TypeToken<List<Participant>>() {
         }.getType());
 

@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -35,4 +38,8 @@ public class BaseActivity extends AppCompatActivity {
         return "http://elkade.pythonanywhere.com/";
     }
 
+
+    protected Gson getGson(){
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+    }
 }

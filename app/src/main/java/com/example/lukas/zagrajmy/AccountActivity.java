@@ -53,7 +53,7 @@ public class AccountActivity extends BaseActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             String json = response.toString();
-                            Gson g = new Gson();
+                            Gson g = getGson();
                             mUser = g.fromJson(json, User.class);
 
                             userNameText.setText(mUser.getName());
@@ -106,7 +106,7 @@ public class AccountActivity extends BaseActivity {
             mUser.setName(userNameText.getText().toString());
             //setPhoto
             String url = getServiceUrl();
-            Gson g = new Gson();
+            Gson g = getGson();
             String jsonString = g.toJson(mUser);
 
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -133,7 +133,7 @@ public class AccountActivity extends BaseActivity {
             mUser.setName(userNameText.getText().toString());
             //setPhoto
             String url = getServiceUrl();
-            Gson g = new Gson();
+            Gson g = getGson();
             String jsonString = g.toJson(mUser);
 
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -141,7 +141,7 @@ public class AccountActivity extends BaseActivity {
                         @Override
                         public void onResponse(JSONObject response) {
                             String json = response.toString();
-                            Gson g = new Gson();
+                            Gson g = getGson();
                             mUser = g.fromJson(json, User.class);
                             SharedPreferences settings = getSharedPreferences("APP_STATE", 0);
                             SharedPreferences.Editor editor = settings.edit();
