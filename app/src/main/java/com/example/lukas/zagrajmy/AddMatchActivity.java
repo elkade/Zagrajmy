@@ -53,6 +53,8 @@ public class AddMatchActivity extends BaseActivity {
         LatLng latLng = getIntent().getParcelableExtra("latLng");
         mMatch.setLatLng(latLng);
         mCal.setTimeInMillis(0);
+        redirectIfUserNotRegistered();
+
     }
 
     private void createSpinner() {

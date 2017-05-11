@@ -1,28 +1,20 @@
 package com.example.lukas.zagrajmy;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.lukas.zagrajmy.model.Match;
 import com.example.lukas.zagrajmy.model.Participant;
-import com.example.lukas.zagrajmy.widgets.DatePickerFragment;
 import com.example.lukas.zagrajmy.widgets.ParticipantsViewAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -32,9 +24,6 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 

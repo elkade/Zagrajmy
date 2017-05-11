@@ -58,6 +58,7 @@ public class MapsActivity extends BaseActivity implements// czy to ma backward c
             matchIntent.putExtra("match_id", matchId);
             startActivity(matchIntent);
         }
+        redirectIfUserNotRegistered();
     }
 
     @Override
@@ -152,7 +153,6 @@ public class MapsActivity extends BaseActivity implements// czy to ma backward c
     }
 
     private void handleResonse(JSONArray response) {
-        Log.i("", "on response");
         pdLoading.dismiss();
         String json = response.toString();
         Gson g = getGson();
