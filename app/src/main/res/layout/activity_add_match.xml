@@ -25,10 +25,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/pick_date" />
-        <TextView
-            android:id="@+id/match_date_text"
+        <Button
+            android:id="@+id/match_time_picker_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/pick_time" />
+
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -36,12 +38,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/match_time_picker_button"
+        <TextView
+            android:id="@+id/match_date_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pick_time" />
+            android:layout_marginRight="5sp"/>
         <TextView
             android:id="@+id/match_time_text"
             android:layout_width="wrap_content"

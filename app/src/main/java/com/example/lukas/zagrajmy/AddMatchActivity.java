@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,6 +40,15 @@ public class AddMatchActivity extends BaseActivity {
     @BindView(R.id.participants_number_spinner)
     Spinner participantsNumberSpinner;
 
+
+    @BindView(R.id.match_date_text)
+    TextView dateText;
+    @BindView(R.id.match_time_text)
+    TextView timeText;
+
+    @BindView(R.id.match_title_text)
+    EditText titleText;
+
     Match mMatch;
 
     Calendar mCal = Calendar.getInstance();
@@ -54,7 +65,7 @@ public class AddMatchActivity extends BaseActivity {
         mMatch.setLatLng(latLng);
         mCal.setTimeInMillis(0);
         redirectIfUserNotRegistered();
-
+        dateText.setText(mCal.getTime().toString());
     }
 
     private void createSpinner() {
@@ -70,6 +81,7 @@ public class AddMatchActivity extends BaseActivity {
     public void onClickPickTimeButton(){
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getSupportFragmentManager(), "timePicker");
+
     }
 
     @OnClick(R.id.match_date_picker_button)
@@ -82,16 +94,21 @@ public class AddMatchActivity extends BaseActivity {
         mCal.set(Calendar.YEAR, year);
         mCal.set(Calendar.MONTH, month);
         mCal.set(Calendar.DAY_OF_MONTH, day);
+        dateText.setText(mCal.getTime().toString());
+
     }
 
     public void setTime(int hourOfDay, int minute) {
         mCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         mCal.set(Calendar.MINUTE, minute);
+        dateText.setText(mCal.getTime().toString());
+
     }
     @OnClick(R.id.match_create_button)
     public void onClickCreateButton(){
         mMatch.setDate(mCal.getTime());
-
+        mMatch.setTitle(titleText.getText().toString());
+        mMatch.setLimit(Integer.parseInt(participantsNumberSpinner.getSelectedItem().toString()));
         String url = "http://elkade.pythonanywhere.com/matches";
         Gson g = getGson();
         String jsonString = g.toJson(mMatch);
@@ -102,6 +119,12 @@ public class AddMatchActivity extends BaseActivity {
                         String json = response.toString();
                         Gson g = getGson();
                         mMatch = g.fromJson(json, Match.class);
+                        Intent resultIntent = new Intent();
+
+                        resultIntent.putExtra("match", mMatch);
+                        setResult(Activity.RESULT_OK, resultIntent);
+
+                        finish();
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -112,11 +135,5 @@ public class AddMatchActivity extends BaseActivity {
         jsObjRequest.setShouldCache(false);
         volley.getRequestQueue().add(jsObjRequest);
 
-        Intent resultIntent = new Intent();
-
-        resultIntent.putExtra("match", mMatch);
-        setResult(Activity.RESULT_OK, resultIntent);
-
-        finish();
     }
 }

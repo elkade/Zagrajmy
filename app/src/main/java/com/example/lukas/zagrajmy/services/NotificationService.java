@@ -108,7 +108,8 @@ public class NotificationService extends Service {
                 if (match.getParticipantsIds().contains(mUserId)) {
                     Date matchDate = match.getDate();
                     if (now.before(matchDate) && future.after(matchDate))
-                        sendNotification(match.getId());
+                        if(match.getParticipantsIds().size()>=match.getLimit())
+                            sendNotification(match.getId());
                 }
             }
         } catch (Exception ex) {

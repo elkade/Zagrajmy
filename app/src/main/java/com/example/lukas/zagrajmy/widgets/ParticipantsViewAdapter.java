@@ -42,8 +42,10 @@ String imagePath;
 
         holder.name.setText(list.get(position).getName());
 
+        String url = imagePath + list.get(position).getId();
+
         Picasso.with(context)
-                .load(imagePath + list.get(position).getId())
+                .load(url)
                 .memoryPolicy(NO_CACHE, NO_STORE)
                 .into(holder.imageView);
     }
